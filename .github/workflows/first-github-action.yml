@@ -20,4 +20,7 @@ jobs:
         aws-region: us-east-2
 
     - name: Deploy static site to S3 bucket
-      run: aws s3 sync . s3://resume.infra-ninja.com/
+      run: aws s3 sync . s3://resume.infra-ninja.com/ --exclude '.git/*' --exclude '.github/*' --exclude '.gitignore'
+
+    - name: Invalidate CloudFront Cache # Invalidate the CloudFront Distribution Cache to get contents from the S3 bucket
+      run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
